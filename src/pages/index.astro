@@ -1,0 +1,104 @@
+---
+import Base from '../layouts/Base.astro';
+import PillCard from '../components/PillCard.astro';
+import { allEditions, allPills, groupByDay } from '../lib/content';
+import { SECTIONS, SECTION_META, formatDate, isoDay, url, SITE } from '../lib/site';
+import { render } from 'astro:content';
+
+const editions = await allEditions();
+const pills = await allPills();
+const byDay = groupByDay(pills);
+
+const latest = editions[0];
+const latestDay = latest ? isoDay(latest.data.date) : pills[0] ? isoDay(pills[0].data.date) : null;
+const todayPills = latestDay ? (byDay.get(latestDay) ?? []) : [];
+const Editorial = latest ? (await render(latest)).Content : null;
+
+const previous = editions.slice(1, 4);
+const orderedSections = SECTIONS.filter((s) => todayPills.some((p) => p.data.section === s));
+---
+
+<Base>
+  <div class="mx-auto max-w-5xl px-5">
+    {
+      latestDay ? (
+        <>
+          <header class="pt-14 pb-10">
+            <p class="text-[13px] uppercase tracking-wide faint mb-3">
+              Edición del {formatDate(new Date(latestDay))}
+            </p>
+            <h1 class="text-[clamp(1.9rem,4.5vw,2.7rem)] font-semibold tracking-tight leading-[1.15] max-w-3xl">
+              {latest?.data.title ?? SITE.tagline}
+            </h1>
+            {latest && (
+              <p class="mt-4 text-[17px] leading-relaxed muted max-w-2xl">{latest.data.hook}</p>
+            )}
+          </header>
+
+          {Editorial && (
+            <div class="prose pb-12 border-b" style="border-color: var(--border)">
+              <Editorial />
+            </div>
+          )}
+
+          <div class="py-12 space-y-12">
+            {orderedSections.map((section) => {
+              const inSection = todayPills.filter((p) => p.data.section === section);
+              const meta = SECTION_META[section];
+              return (
+                <section>
+                  <div class="flex items-baseline justify-between gap-4 mb-4">
+                    <h2 class="text-[13px] uppercase tracking-wide font-semibold" style={`color: var(--color-${meta.accent})`}>
+                      {meta.name}
+                    </h2>
+                    <a href={url(`/seccion/${section}`)} class="text-[12.5px] faint hover:underline shrink-0">
+                      Ver todo
+                    </a>
+                  </div>
+                  <div class="grid gap-3">
+                    {inSection.map((pill) => (
+                      <PillCard pill={pill} showSection={false} />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+
+          {previous.length > 0 && (
+            <section class="pb-8 pt-4 border-t" style="border-color: var(--border)">
+              <h2 class="text-[13px] uppercase tracking-wide faint mb-4 mt-8">
+                Ediciones anteriores
+              </h2>
+              <ul class="grid gap-2 sm:grid-cols-3">
+                {previous.map((e) => (
+                  <li>
+                    <a
+                      href={url(`/edicion/${isoDay(e.data.date)}`)}
+                      class="block rounded-lg p-4 surface hover:border-[var(--border-strong)] transition-colors h-full"
+                    >
+                      <span class="block text-[12px] faint mb-1">{formatDate(e.data.date)}</span>
+                      <span class="block text-[14px] font-medium leading-snug">{e.data.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a href={url('/archivo')} class="inline-block mt-4 text-[13.5px] link">
+                Todo el archivo →
+              </a>
+            </section>
+          )}
+        </>
+      ) : (
+        <div class="py-24 max-w-2xl">
+          <h1 class="text-3xl font-semibold tracking-tight mb-4">Todavía no hay ediciones</h1>
+          <p class="text-[16px] leading-relaxed muted">
+            La primera edición se publica en la próxima ejecución diaria, que arranca sobre las 7:20
+            de la mañana (Europe/Madrid) para que esté lista antes de las 8:00. Si quieres una
+            ahora, pídemela en una conversación.
+          </p>
+        </div>
+      )
+    }
+  </div>
+</Base>

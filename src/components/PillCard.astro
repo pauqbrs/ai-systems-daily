@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { SECTION_META, sectionAccent, url } from '../lib/site';
+import SelectToggle from './SelectToggle';
+
+interface Props {
+  pill: CollectionEntry<'pills'>;
+  /** Muestra la sección; se oculta en las páginas que ya son de una sección. */
+  showSection?: boolean;
+}
+
+const { pill, showSection = true } = Astro.props;
+const { data } = pill;
+const meta = SECTION_META[data.section];
+const accent = sectionAccent(data.section);
+---
+
+<article
+  class="group relative rounded-xl p-5 surface transition-colors hover:border-[var(--border-strong)]"
+>
+  <div class="flex items-start gap-4">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[12px] mb-2">
+        {
+          showSection && (
+            <a
+              href={url(`/seccion/${data.section}`)}
+              class="inline-flex items-center gap-1.5 font-medium relative z-10"
+              style={`color: ${accent}`}
+            >
+              <span
+                class="w-1.5 h-1.5 rounded-full"
+                style={`background: ${accent}`}
+                aria-hidden="true"
+              />
+              {meta.name}
+            </a>
+          )
+        }
+        {
+          data.depth === 'analisis' && (
+            <span
+              class="px-1.5 py-0.5 rounded font-medium"
+              style="background: var(--bg-sunken); color: var(--text-muted)"
+            >
+              Análisis
+            </span>
+          )
+        }
+        <span class="faint">{data.readingMinutes} min</span>
+        {data.quiz.length > 0 && <span class="faint">· {data.quiz.length} preguntas</span>}
+      </div>
+
+      <h3 class="text-[16.5px] font-semibold leading-snug tracking-tight mb-1.5">
+        <a href={url(`/pill/${pill.id}`)} class="after:absolute after:inset-0">
+          {data.title}
+        </a>
+      </h3>
+
+      <p class="text-[14px] leading-relaxed muted">{data.tldr}</p>
+
+      <p class="text-[12.5px] faint mt-2.5">
+        {data.source.author} · {data.source.platform}
+      </p>
+    </div>
+
+    <div class="relative z-10">
+      <SelectToggle
+        client:idle
+        id={pill.id}
+        title={data.title}
+        section={data.section}
+        sourceUrl={data.source.url}
+      />
+    </div>
+  </div>
+</article>

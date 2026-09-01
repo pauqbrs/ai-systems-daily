@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import SelectionBuilder from '../components/SelectionBuilder';
+import { PROJECTS, PROJECT_META, SITE } from '../lib/site';
+
+const projects = PROJECTS.map((id) => ({
+  id,
+  name: PROJECT_META[id].name,
+  blurb: PROJECT_META[id].blurb,
+}));
+---
+
+<Base
+  title="Tu selección"
+  description="Las piezas que has marcado para convertir en una guía de aplicación."
+  hideTray
+>
+  <div class="mx-auto max-w-3xl px-5">
+    <header class="pt-14 pb-8">
+      <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold tracking-tight">Tu selección</h1>
+      <p class="mt-3 text-[16.5px] leading-relaxed muted">
+        Elige a qué proyecto quieres aplicar lo que has marcado y pide la guía. Saldrá un documento
+        con el plan de implementación, las decisiones de diseño que tienes que tomar y un examen
+        final para comprobar que lo has entendido antes de tocar código.
+      </p>
+    </header>
+
+    <div class="pb-20">
+      <SelectionBuilder
+        client:load
+        repo={SITE.repo}
+        projects={projects}
+        basePath={import.meta.env.BASE_URL}
+      />
+    </div>
+  </div>
+</Base>

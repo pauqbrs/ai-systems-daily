@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import PillCard from '../../components/PillCard.astro';
+import { allPills } from '../../lib/content';
+import { SECTIONS, SECTION_META, sectionAccent, formatDate, isoDay } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const pills = await allPills();
+  return SECTIONS.map((section) => ({
+    params: { section },
+    props: { pills: pills.filter((p) => p.data.section === section) },
+  }));
+}
+
+const { section } = Astro.params;
+const { pills } = Astro.props;
+const meta = SECTION_META[section as keyof typeof SECTION_META];
+const accent = sectionAccent(section as (typeof SECTIONS)[number]);
+
+// Agrupadas por mes para que el scroll tenga puntos de referencia.
+const byMonth = new Map<string, typeof pills>();
+for (const pill of pills) {
+  const key = isoDay(pill.data.date).slice(0, 7);
+  const bucket = byMonth.get(key);
+  if (bucket) bucket.push(pill);
+  else byMonth.set(key, [pill]);
+}
+const monthFmt = new Intl.DateTimeFormat('es-ES', {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<Base title={meta.name} description={meta.blurb}>
+  <div class="mx-auto max-w-5xl px-5">
+    <header class="pt-14 pb-8 max-w-2xl">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-2 h-2 rounded-full" style={`background: ${accent}`} aria-hidden="true"></span>
+        <span class="text-[13px] uppercase tracking-wide font-semibold" style={`color: ${accent}`}>
+          Sección
+        </span>
+      </div>
+      <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold tracking-tight leading-tight">
+        {meta.name}
+      </h1>
+      <p class="mt-3 text-[16.5px] leading-relaxed muted">{meta.blurb}</p>
+      <p class="mt-4 text-[13px] faint">
+        {pills.length}
+        {pills.length === 1 ? 'pieza publicada' : 'piezas publicadas'}
+      </p>
+    </header>
+
+    <div class="pb-16 space-y-10">
+      {
+        pills.length === 0 ? (
+          <p class="muted text-[15px] py-8">
+            Todavía no hay nada en esta sección. Aparecerá en cuanto una edición diaria traiga algo
+            que encaje.
+          </p>
+        ) : (
+          [...byMonth.entries()].map(([month, monthPills]) => (
+            <section>
+              <h2 class="text-[12px] uppercase tracking-wide faint mb-3">
+                {monthFmt.format(new Date(`${month}-01T00:00:00Z`))}
+              </h2>
+              <div class="grid gap-3">
+                {monthPills.map((pill) => (
+                  <PillCard pill={pill} showSection={false} />
+                ))}
+              </div>
+            </section>
+          ))
+        )
+      }
+    </div>
+  </div>
+</Base>

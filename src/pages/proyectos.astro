@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import { allPills } from '../lib/content';
+import { PROJECTS, PROJECT_META, url, sectionAccent } from '../lib/site';
+
+const pills = await allPills();
+---
+
+<Base
+  title="Proyectos"
+  description="Los proyectos activos contra los que se cruza cada aprendizaje de la newsletter."
+>
+  <div class="mx-auto max-w-3xl px-5">
+    <header class="pt-14 pb-8">
+      <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold tracking-tight">Proyectos</h1>
+      <p class="mt-3 text-[16.5px] leading-relaxed muted">
+        Cada pieza se etiqueta con el proyecto al que aplica. Es lo que permite que las guías bajen
+        de «esto es interesante» a «esto es lo que cambias el martes».
+      </p>
+    </header>
+
+    <div class="pb-20 space-y-10">
+      {
+        PROJECTS.map((id) => {
+          const meta = PROJECT_META[id];
+          const related = pills.filter((p) => p.data.projects.includes(id));
+          return (
+            <section id={id} class="scroll-mt-20">
+              <h2 class="text-[18px] font-semibold tracking-tight">{meta.name}</h2>
+              <p class="mt-2 text-[15px] leading-relaxed muted max-w-prose">{meta.blurb}</p>
+              <p class="mt-3 text-[12.5px] faint">
+                {related.length} {related.length === 1 ? 'pieza relacionada' : 'piezas relacionadas'}
+              </p>
+              {related.length > 0 && (
+                <ul class="mt-3 space-y-1.5">
+                  {related.slice(0, 8).map((pill) => (
+                    <li class="text-[14px]">
+                      <a href={url(`/pill/${pill.id}`)} class="hover:underline">
+                        <span
+                          class="inline-block w-1.5 h-1.5 rounded-full mr-2 align-middle"
+                          style={`background: ${sectionAccent(pill.data.section)}`}
+                          aria-hidden="true"
+                        />
+                        {pill.data.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          );
+        })
+      }
+    </div>
+  </div>
+</Base>

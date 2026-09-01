@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro';
+import { glossaryIndex } from '../lib/content';
+import { url } from '../lib/site';
+
+const terms = await glossaryIndex();
+
+// Índice alfabético para saltar rápido.
+const letters = [...new Set(terms.map((t) => t.term[0]!.toUpperCase()))];
+---
+
+<Base
+  title="Glosario"
+  description="La jerga técnica en inglés que aparece en la newsletter, explicada en una frase."
+>
+  <div class="mx-auto max-w-3xl px-5">
+    <header class="pt-14 pb-6">
+      <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold tracking-tight">Glosario</h1>
+      <p class="mt-3 text-[16.5px] leading-relaxed muted">
+        La newsletter no traduce la jerga técnica, la explica. Aquí se acumula cada término que ha
+        aparecido, con el enlace a la pieza donde salió.
+      </p>
+    </header>
+
+    {
+      letters.length > 0 && (
+        <nav class="flex flex-wrap gap-1 pb-8" aria-label="Índice alfabético">
+          {letters.map((l) => (
+            <a
+              href={`#letra-${l}`}
+              class="w-7 h-7 grid place-items-center rounded text-[12.5px] font-mono faint hover:bg-[var(--bg-sunken)]"
+            >
+              {l}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+
+    <dl class="pb-20 space-y-6">
+      {
+        terms.length === 0 ? (
+          <p class="muted text-[15px]">
+            El glosario se llena solo: cada pieza aporta los términos que usa.
+          </p>
+        ) : (
+          terms.map((t, i) => {
+            const letter = t.term[0]!.toUpperCase();
+            const isFirstOfLetter = i === 0 || terms[i - 1]!.term[0]!.toUpperCase() !== letter;
+            return (
+              <div id={isFirstOfLetter ? `letra-${letter}` : undefined} class="scroll-mt-20">
+                <dt class="text-[15.5px] font-semibold font-mono tracking-tight">{t.term}</dt>
+                <dd class="text-[14.5px] leading-relaxed muted mt-1">
+                  {t.definition}
+                  <span class="block mt-1.5 text-[12.5px] faint">
+                    Aparece en:{' '}
+                    {t.pills.map((p, j) => (
+                      <>
+                        {j > 0 && ', '}
+                        <a href={url(`/pill/${p.id}`)} class="link">
+                          {p.title}
+                        </a>
+                      </>
+                    ))}
+                  </span>
+                </dd>
+              </div>
+            );
+          })
+        )
+      }
+    </dl>
+  </div>
+</Base>

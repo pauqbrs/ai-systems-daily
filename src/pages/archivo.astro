@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+import { allEditions, allPills, groupByDay } from '../lib/content';
+import { SECTION_META, sectionAccent, formatDate, isoDay, url } from '../lib/site';
+
+const editions = await allEditions();
+const pills = await allPills();
+const byDay = groupByDay(pills);
+
+// Días con contenido: los que tienen edición y, por si acaso, los que solo
+// tienen pills sueltos (una ejecución que falló a medias no debe perder nada).
+const days = [...new Set([...editions.map((e) => isoDay(e.data.date)), ...byDay.keys()])].sort(
+  (a, b) => b.localeCompare(a),
+);
+const editionByDay = new Map(editions.map((e) => [isoDay(e.data.date), e]));
+---
+
+<Base title="Archivo" description="Todas las ediciones diarias publicadas.">
+  <div class="mx-auto max-w-5xl px-5">
+    <header class="pt-14 pb-8 max-w-2xl">
+      <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold tracking-tight">Archivo</h1>
+      <p class="mt-3 text-[16.5px] leading-relaxed muted">
+        {days.length}
+        {days.length === 1 ? 'edición publicada' : 'ediciones publicadas'} · {pills.length} piezas en
+        total.
+      </p>
+    </header>
+
+    <ul class="pb-16 divide-y" style="border-color: var(--border)">
+      {
+        days.map((day) => {
+          const edition = editionByDay.get(day);
+          const dayPills = byDay.get(day) ?? [];
+          return (
+            <li class="py-5 border-t" style="border-color: var(--border)">
+              <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-2">
+                <a
+                  href={url(`/edicion/${day}`)}
+                  class="text-[16px] font-semibold tracking-tight hover:underline"
+                >
+                  {edition?.data.title ?? `Edición del ${formatDate(new Date(day))}`}
+                </a>
+                <span class="text-[12.5px] faint">{formatDate(new Date(day))}</span>
+              </div>
+              {edition && <p class="text-[14px] leading-relaxed muted mb-3 max-w-2xl">{edition.data.hook}</p>}
+              <ul class="flex flex-wrap gap-x-4 gap-y-1">
+                {dayPills.map((pill) => (
+                  <li class="text-[13px]">
+                    <a href={url(`/pill/${pill.id}`)} class="hover:underline">
+                      <span
+                        class="inline-block w-1.5 h-1.5 rounded-full mr-1.5 align-middle"
+                        style={`background: ${sectionAccent(pill.data.section)}`}
+                        aria-hidden="true"
+                      />
+                      {pill.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          );
+        })
+      }
+      {
+        days.length === 0 && (
+          <li class="py-10 muted text-[15px]">Todavía no hay ediciones archivadas.</li>
+        )
+      }
+    </ul>
+  </div>
+</Base>

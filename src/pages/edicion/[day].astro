@@ -1,0 +1,75 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PillCard from '../../components/PillCard.astro';
+import { allEditions, allPills, groupByDay } from '../../lib/content';
+import { SECTIONS, SECTION_META, formatDate, isoDay, url } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const editions = await allEditions();
+  const pills = await allPills();
+  const byDay = groupByDay(pills);
+  const days = [...new Set([...editions.map((e) => isoDay(e.data.date)), ...byDay.keys()])];
+  const editionByDay = new Map(editions.map((e) => [isoDay(e.data.date), e]));
+
+  return days.map((day) => ({
+    params: { day },
+    props: { day, edition: editionByDay.get(day) ?? null, pills: byDay.get(day) ?? [] },
+  }));
+}
+
+const { day, edition, pills } = Astro.props;
+const Editorial = edition ? (await render(edition)).Content : null;
+const orderedSections = SECTIONS.filter((s) => pills.some((p) => p.data.section === s));
+---
+
+<Base
+  title={edition?.data.title ?? `Edición del ${formatDate(new Date(day))}`}
+  description={edition?.data.hook}
+>
+  <div class="mx-auto max-w-5xl px-5">
+    <header class="pt-14 pb-8 max-w-3xl">
+      <p class="text-[13px] uppercase tracking-wide faint mb-3">
+        Edición del {formatDate(new Date(day))}
+      </p>
+      <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold tracking-tight leading-[1.18]">
+        {edition?.data.title ?? `Piezas del ${formatDate(new Date(day))}`}
+      </h1>
+      {edition && <p class="mt-4 text-[17px] leading-relaxed muted">{edition.data.hook}</p>}
+    </header>
+
+    {
+      Editorial && (
+        <div class="prose pb-12 border-b" style="border-color: var(--border)">
+          <Editorial />
+        </div>
+      )
+    }
+
+    <div class="py-12 space-y-12 pb-16">
+      {
+        orderedSections.map((section) => (
+          <section>
+            <h2
+              class="text-[13px] uppercase tracking-wide font-semibold mb-4"
+              style={`color: var(--color-${SECTION_META[section].accent})`}
+            >
+              {SECTION_META[section].name}
+            </h2>
+            <div class="grid gap-3">
+              {pills
+                .filter((p) => p.data.section === section)
+                .map((pill) => (
+                  <PillCard pill={pill} showSection={false} />
+                ))}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <div class="pb-16">
+      <a href={url('/archivo')} class="text-[13.5px] link">← Todo el archivo</a>
+    </div>
+  </div>
+</Base>
