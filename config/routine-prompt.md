@@ -52,17 +52,24 @@ Escribe también el editorial del día en `src/content/editions/YYYY-MM-DD.md`, 
 
 1. `bun install && bun run build`. El build valida el contenido contra los esquemas.
 2. Si el build falla, arregla el CONTENIDO, nunca el esquema. No publiques nada que no compile.
-3. Publica en una rama `claude/`, **NUNCA en main**:
+3. Publica directamente en `main`:
+
+   ```bash
+   git add -A
+   git commit -m "Edición del $(date +%F)"
+   git push origin main
+   ```
+
+   Está verificado que funciona: el push dispara `.github/workflows/deploy.yml`, que valida el contenido y despliega a GitHub Pages. No abras ningún pull request.
+
+   Si algún día el push a `main` te lo rechazan, el plan B es una rama `claude/`, que el workflow promociona a `main` por su cuenta:
 
    ```bash
    RAMA="claude/edicion-$(date +%F)"
-   git checkout -b "$RAMA"
-   git add -A
-   git commit -m "Edición del $(date +%F)"
-   git push -u origin "$RAMA"
+   git checkout -b "$RAMA" && git push -u origin "$RAMA"
    ```
 
-   El workflow `.github/workflows/deploy.yml` se dispara con esa rama, la fusiona en `main` con el token del repositorio y despliega a GitHub Pages. No abras ningún pull request.
+   Ojo: por esa vía el despliegue puede fallar por la regla de ramas del entorno `github-pages`. Es respaldo, no el camino normal.
 
 4. Comprueba que el workflow ha pasado. Si falla, mira el log y arregla el contenido.
 5. Termina con un resumen: qué piezas has publicado, de qué fuentes, y qué guías. Si algo no se pudo hacer, dilo explícitamente.
@@ -82,10 +89,12 @@ repositorio se llamaba entonces `pauqbrs-ai-systems-daily` y el prompt buscaba
 perdió en el `git push`.** Se había creado por API, que no permite adjuntar
 repositorios, así que sus sesiones nacían sin credenciales de escritura.
 
-**3. El job `deploy` murió en 2 segundos sin ejecutar un paso.** No es del
-código: el entorno `github-pages` solo admite despliegues desde las ramas de su
-lista. Hay que permitir `claude/**` en Settings → Environments → github-pages →
-Deployment branches.
+**3. El job `deploy` murió en 2 segundos sin ejecutar un paso** al publicar
+desde una rama `claude/`. No es del código: el entorno `github-pages` solo
+admite despliegues desde las ramas de su lista. Por eso el camino normal es
+empujar a `main`, que sí está permitido. Si algún día hiciera falta desplegar
+desde una rama, hay que permitir `claude/**` en Settings → Environments →
+github-pages → Deployment branches.
 
 **4. Dos sesiones se quedaron bloqueadas en «Waiting on permission: Bash»** al
 hacer `git commit`. De ahí `.claude/settings.json`: pre-aprueba las órdenes de

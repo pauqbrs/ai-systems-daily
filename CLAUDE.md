@@ -152,27 +152,32 @@ Cada mañana, en este orden:
 5. Escribir entre 3 y 5 pills + el editorial del día.
 6. **`bun install && bun run build`.** El build valida el contenido contra los
    esquemas. Si falla, arréglalo: no se empuja contenido que no compila.
-7. Commit y push **a una rama `claude/edicion-YYYY-MM-DD`**, nunca a `main`
-   (ver más abajo). El workflow la promociona a `main` y despliega solo.
+7. Commit y `git push origin main`. El workflow valida el contenido y despliega.
 8. Si algo no se pudo hacer, decirlo en el editorial. Nunca rellenar con humo.
 
-### Por qué no se empuja a `main`
+### Sobre el push
 
-Las sesiones de la rutina solo escriben sin fricción en ramas con prefijo
-`claude/`. Un push directo a `main` se rechaza además porque `main` tiene
-commits de un autor distinto al dueño de la rutina.
+El camino normal es empujar a `main`: está verificado que funciona y que
+dispara el despliegue.
 
-Así que el flujo es:
+Existe un plan B por si algún día el push a `main` se rechaza. Empujar a una
+rama `claude/` siempre se acepta, y el workflow la promociona a `main` con el
+token del repositorio:
 
 ```bash
-git checkout -b claude/edicion-$(date +%F)
-git add -A && git commit -m "Edición del ..."
-git push -u origin claude/edicion-$(date +%F)
+RAMA="claude/edicion-$(date +%F)"
+git checkout -b "$RAMA" && git push -u origin "$RAMA"
 ```
 
-El workflow `.github/workflows/deploy.yml` se dispara con esa rama, la
-fusiona en `main` con el token del repositorio, y despliega. No hay que
-abrir ningún pull request ni esperar a que nadie apruebe nada.
+Por esa vía el despliegue puede fallar: el entorno `github-pages` solo acepta
+despliegues desde las ramas de su lista, y `claude/**` no está en ella. La
+promoción a `main` sí se aplica, así que el contenido no se pierde.
+
+### Permisos
+
+`.claude/settings.json` pre-aprueba los comandos de git y de build. Sin él, una
+sesión automática se queda bloqueada pidiendo aprobación y no publica nada. Si
+añades un paso que use un comando nuevo, añádelo también ahí.
 
 ---
 

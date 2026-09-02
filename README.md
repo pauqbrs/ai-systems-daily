@@ -27,20 +27,20 @@ combinada** que las baja a un proyecto concreto.
   src/content/{pills,editions,guides}/*.md
         │
         ▼
-  push a claude/edicion-YYYY-MM-DD   ← nunca directamente a main
+  git push origin main
         │
         ▼
-  GitHub Actions: promociona la rama a main con el token del repo,
-  valida el contenido con `bun run build` y despliega
+  GitHub Actions: valida el contenido con `bun run build` y despliega
         ▼
   https://pauqbrs.github.io/ai-systems-daily
 ```
 
-**Por qué el rodeo por una rama `claude/`:** una rutina solo escribe sin
-fricción en ramas con ese prefijo, y un push directo a `main` se rechaza cuando
-la rama tiene commits de un autor distinto al dueño de la rutina. El workflow
-hace la promoción con el `GITHUB_TOKEN` del repositorio, que sí tiene permiso,
-así que no hace falta abrir ni aprobar ningún pull request.
+**Por qué `.claude/settings.json` importa:** sin él, una sesión automática se
+queda bloqueada pidiendo aprobación para `git commit` y no publica nada. Ese
+fichero pre-aprueba los comandos del flujo diario.
+
+**Plan B:** el workflow también acepta ramas `claude/**` y las promociona a
+`main` por su cuenta, por si algún día el push directo se rechaza.
 
 El bucle de las guías:
 
