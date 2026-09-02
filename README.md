@@ -16,19 +16,31 @@ combinada** que las baja a un proyecto concreto.
   7:20 Europe/Madrid
         │
         ▼
-  Sesión programada (Routine de Claude Code)
-        │  lee CLAUDE.md, config/sources.md, config/projects.md
-        │  atiende issues con etiqueta `guia-solicitada`
+  Routine → despierta la sesión motor de publicación
+        │  (una sesión persistente con el repo anclado; es lo que le
+        │   da credenciales de escritura, y sin eso el trabajo se pierde)
+        │
+        │  lee CLAUDE.md, config/routine-prompt.md, config/projects.md
+        │  atiende los issues de guía pendientes
         │  investiga las fuentes y escribe el contenido
         ▼
   src/content/{pills,editions,guides}/*.md
         │
         ▼
-  git push → GitHub Actions → bun run build → GitHub Pages
-        │       (el build valida el contenido contra los esquemas)
+  push a claude/edicion-YYYY-MM-DD   ← nunca directamente a main
+        │
+        ▼
+  GitHub Actions: promociona la rama a main con el token del repo,
+  valida el contenido con `bun run build` y despliega
         ▼
   https://pauqbrs.github.io/ai-systems-daily
 ```
+
+**Por qué el rodeo por una rama `claude/`:** una rutina solo escribe sin
+fricción en ramas con ese prefijo, y un push directo a `main` se rechaza cuando
+la rama tiene commits de un autor distinto al dueño de la rutina. El workflow
+hace la promoción con el `GITHUB_TOKEN` del repositorio, que sí tiene permiso,
+así que no hace falta abrir ni aprobar ningún pull request.
 
 El bucle de las guías:
 

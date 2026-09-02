@@ -2,7 +2,7 @@ name: Publicar y desplegar
 
 # Se dispara en dos casos:
 #  - push a main: publicación normal (una persona editando directamente).
-#  - push a claude/edicion-*: la rutina diaria.
+#  - push a claude/**: la rutina diaria y cualquier trabajo agéntico.
 #
 # La rutina NO puede empujar a main. Las rutinas solo pueden escribir sin
 # fricción en ramas con prefijo `claude/`, y además un push a main se rechaza
@@ -13,7 +13,7 @@ on:
   push:
     branches:
       - main
-      - 'claude/edicion-*'
+      - 'claude/**'
   workflow_dispatch:
 
 permissions:
@@ -30,7 +30,7 @@ concurrency:
 jobs:
   promocionar:
     # Solo para las ramas de la rutina. Deja main con la edición nueva.
-    if: startsWith(github.ref, 'refs/heads/claude/edicion-')
+    if: startsWith(github.ref, 'refs/heads/claude/')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
