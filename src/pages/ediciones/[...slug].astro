@@ -1,0 +1,58 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { href, formatDate, isoDate, SECTION_LABELS, DEPTH_LABELS } from '../../lib/site';
+
+export const getStaticPaths = (async () => {
+  const editions = await getCollection('editions');
+  return editions.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+// `pieces` guarda IDs de pills; resolvemos y avisamos si alguno no existe.
+const allPills = await getCollection('pills');
+const byId = new Map(allPills.map((p) => [p.id, p]));
+const pieces = entry.data.pieces.map((id) => ({ id, pill: byId.get(id) }));
+const missing = pieces.filter((p) => !p.pill).map((p) => p.id);
+---
+
+<Base title={`${entry.data.title} · AI Systems Daily`} description={entry.data.thread}>
+  <time class="meta" datetime={isoDate(entry.data.date)}>
+    {formatDate(entry.data.date)} · {entry.data.totalReadingMinutes} min de lectura
+  </time>
+  <h1>{entry.data.title}</h1>
+
+  <Content />
+
+  <h2>En esta edición</h2>
+  {
+    missing.length > 0 && (
+      <div class="callout">
+        <p>
+          Estas piezas están listadas en la edición pero no existen en{' '}
+          <code>src/content/pills/</code>: {missing.join(', ')}
+        </p>
+      </div>
+    )
+  }
+  {
+    pieces.map(({ pill }) =>
+      pill ? (
+        <article class="entry">
+          <span class="tag">{SECTION_LABELS[pill.data.section] ?? pill.data.section}</span>
+          <span class="tag plain">{DEPTH_LABELS[pill.data.depth] ?? pill.data.depth}</span>
+          <span class="meta"> · {pill.data.readingMinutes} min</span>
+          <h2>
+            <a href={href(`/piezas/${pill.id}`)}>{pill.data.title}</a>
+          </h2>
+          <p>{pill.data.summary}</p>
+        </article>
+      ) : null,
+    )
+  }
+
+  <p style="margin-top:2.5rem"><a href={href('/')}>← Todas las ediciones</a></p>
+</Base>

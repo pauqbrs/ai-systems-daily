@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { href, formatDate, isoDate } from '../lib/site';
+
+const editions = (await getCollection('editions')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Base
+  title="AI Systems Daily"
+  description="Newsletter diaria sobre sistemas de IA aplicados: mecanismos, coste y modos de fallo."
+>
+  <h1>AI Systems Daily</h1>
+  <p class="meta">
+    Cómo se construyen, se miden y se rompen los sistemas que ponen modelos en
+    producción. Fuentes primarias o nada.
+  </p>
+
+  {
+    editions.length === 0 ? (
+      <div class="callout">
+        <h3>Todavía no hay ediciones</h3>
+        <p>
+          El repositorio está montado y el build valida el contenido, pero aún no se
+          ha publicado ninguna edición. Antes de la primera hay que rellenar{' '}
+          <code>config/projects.md</code> y revisar <code>CLAUDE.md</code>.
+        </p>
+      </div>
+    ) : (
+      editions.map((ed) => (
+        <article class="entry">
+          <time class="meta" datetime={isoDate(ed.data.date)}>
+            {formatDate(ed.data.date)} · {ed.data.totalReadingMinutes} min
+          </time>
+          <h2>
+            <a href={href(`/ediciones/${ed.id}`)}>{ed.data.title}</a>
+          </h2>
+          <p>{ed.data.thread}</p>
+        </article>
+      ))
+    )
+  }
+</Base>

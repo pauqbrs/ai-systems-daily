@@ -1,0 +1,88 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { href, formatDate, isoDate, SECTION_LABELS, DEPTH_LABELS } from '../../lib/site';
+
+export const getStaticPaths = (async () => {
+  const pills = await getCollection('pills');
+  return pills
+    .filter((p) => !p.data.draft)
+    .map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+
+<Base title={`${d.title} · AI Systems Daily`} description={d.summary}>
+  <span class="tag">{SECTION_LABELS[d.section] ?? d.section}</span>
+  <span class="tag plain">{DEPTH_LABELS[d.depth] ?? d.depth}</span>
+  <h1 style="margin-top:0.75rem">{d.title}</h1>
+  <p class="meta">
+    <time datetime={isoDate(d.date)}>{formatDate(d.date)}</time> · {d.readingMinutes} min
+  </p>
+
+  <Content />
+
+  <div class="callout">
+    <h3>Para {d.project}</h3>
+    <p>{d.projectTakeaway}</p>
+  </div>
+
+  {
+    d.glossary.length > 0 && (
+      <>
+        <h2>Glosario</h2>
+        <dl class="glossary">
+          {d.glossary.map((g) => (
+            <>
+              <dt>{g.term}</dt>
+              <dd>{g.definition}</dd>
+            </>
+          ))}
+        </dl>
+      </>
+    )
+  }
+
+  <h2>Comprueba que lo has pillado</h2>
+  <div class="quiz">
+    {
+      d.quiz.map((q, i) => (
+        <details>
+          <summary>
+            {i + 1}. {q.question}
+          </summary>
+          <ul>
+            {q.options.map((opt, j) => (
+              <li class={j === q.answer ? 'right' : ''}>
+                {opt}
+                {j === q.answer ? ' ✓' : ''}
+              </li>
+            ))}
+          </ul>
+          <p class="why">{q.explanation}</p>
+        </details>
+      ))
+    }
+  </div>
+
+  <h2>Fuentes</h2>
+  <ol class="sources">
+    {
+      d.sources.map((s) => (
+        <li>
+          <a href={s.url} rel="noopener">
+            {s.title}
+          </a>
+          {s.publisher && <span class="pub"> · {s.publisher}</span>}
+          {s.publishedAt && <span class="pub"> · {formatDate(s.publishedAt)}</span>}
+        </li>
+      ))
+    }
+  </ol>
+
+  <p style="margin-top:2.5rem"><a href={href('/')}>← Todas las ediciones</a></p>
+</Base>

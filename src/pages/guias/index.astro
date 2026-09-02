@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { href, formatDate, isoDate } from '../../lib/site';
+
+const guides = (await getCollection('guides')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Base
+  title="Guías · AI Systems Daily"
+  description="Guías operativas: pasos que se ejecutan, no ensayos."
+>
+  <h1>Guías</h1>
+  <p class="meta">
+    Nacen de peticiones concretas (issues con la etiqueta <code>guia-solicitada</code>)
+    y se apoyan en piezas ya publicadas. Son operativas: pasos que se ejecutan.
+  </p>
+
+  {
+    guides.length === 0 ? (
+      <div class="callout">
+        <h3>Todavía no hay guías</h3>
+        <p>
+          Abre un issue con la etiqueta <code>guia-solicitada</code> indicando qué
+          piezas quieres que destile.
+        </p>
+      </div>
+    ) : (
+      guides.map((g) => (
+        <article class="entry">
+          <time class="meta" datetime={isoDate(g.data.date)}>
+            {formatDate(g.data.date)} · {g.data.readingMinutes} min
+          </time>
+          <h2>
+            <a href={href(`/guias/${g.id}`)}>{g.data.title}</a>
+          </h2>
+          <p>{g.data.summary}</p>
+        </article>
+      ))
+    )
+  }
+</Base>

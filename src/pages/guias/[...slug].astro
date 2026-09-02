@@ -1,0 +1,46 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { href, formatDate, isoDate } from '../../lib/site';
+
+export const getStaticPaths = (async () => {
+  const guides = await getCollection('guides');
+  return guides.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+
+const allPills = await getCollection('pills');
+const byId = new Map(allPills.map((p) => [p.id, p]));
+const basedOn = d.basedOn.map((id) => byId.get(id)).filter((p) => p !== undefined);
+---
+
+<Base title={`${d.title} · Guías · AI Systems Daily`} description={d.summary}>
+  <span class="tag">Guía</span>
+  <h1 style="margin-top:0.75rem">{d.title}</h1>
+  <p class="meta">
+    <time datetime={isoDate(d.date)}>{formatDate(d.date)}</time> · {d.readingMinutes} min · para {d.project}
+  </p>
+
+  <Content />
+
+  {
+    basedOn.length > 0 && (
+      <>
+        <h2>Se apoya en</h2>
+        <ol class="sources">
+          {basedOn.map((p) => (
+            <li>
+              <a href={href(`/piezas/${p.id}`)}>{p.data.title}</a>
+            </li>
+          ))}
+        </ol>
+      </>
+    )
+  }
+
+  <p style="margin-top:2.5rem"><a href={href('/guias')}>← Todas las guías</a></p>
+</Base>
