@@ -66,3 +66,33 @@ Escribe también el editorial del día en `src/content/editions/YYYY-MM-DD.md`, 
 
 4. Comprueba que el workflow ha pasado. Si falla, mira el log y arregla el contenido.
 5. Termina con un resumen: qué piezas has publicado, de qué fuentes, y qué guías. Si algo no se pudo hacer, dilo explícitamente.
+
+---
+
+## Historial de incidencias
+
+Cuatro fallos reales del 2 de septiembre de 2026, el día del montaje. Si algo se
+comporta raro, empieza mirando aquí.
+
+**1. La rutina se ejecutó, se marcó como correcta y no publicó nada.** El
+repositorio se llamaba entonces `pauqbrs-ai-systems-daily` y el prompt buscaba
+`ai-systems-daily`.
+
+**2. La rutina escribió la edición entera (62.503 tokens de salida, 4,68 $) y la
+perdió en el `git push`.** Se había creado por API, que no permite adjuntar
+repositorios, así que sus sesiones nacían sin credenciales de escritura.
+
+**3. El job `deploy` murió en 2 segundos sin ejecutar un paso.** No es del
+código: el entorno `github-pages` solo admite despliegues desde las ramas de su
+lista. Hay que permitir `claude/**` en Settings → Environments → github-pages →
+Deployment branches.
+
+**4. Dos sesiones se quedaron bloqueadas en «Waiting on permission: Bash»** al
+hacer `git commit`. De ahí `.claude/settings.json`: pre-aprueba las órdenes de
+git y de build para que ninguna sesión se quede esperando una aprobación a las
+siete de la mañana. Si añades un paso al flujo que use un comando nuevo,
+añádelo también a ese fichero.
+
+**La lección de las cuatro:** un estado «correcto» solo significa que la sesión
+terminó sin error de infraestructura. Comprueba siempre que el push llegó y que
+el workflow pasó.
