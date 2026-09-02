@@ -3,7 +3,7 @@ title: 'Construir el agente de auditoría rápida de gestorías'
 date: 2026-09-01
 project: 'auditoria-gestorias'
 summary: 'Plan de implementación para el sistema que diagnostica un despacho en una sesión y devuelve un plan de automatización priorizado por horas recuperables. Combina el marco de negocio con las tres palancas de contexto y el enrutamiento determinista.'
-pills:
+basedOn:
   - 2026-09-01-back-office-gestoria-que-automatizar-primero
   - 2026-09-01-contratos-de-tools-y-routing
   - 2026-09-01-compaction-clearing-memory

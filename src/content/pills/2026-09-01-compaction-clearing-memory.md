@@ -5,12 +5,14 @@ section: datos-tokens
 depth: analisis
 readingMinutes: 3
 tldr: 'El cookbook de Claude separa tres problemas distintos que la gente mete en el mismo saco: el diálogo que crece, los resultados de tools que se acumulan y el conocimiento que se pierde entre sesiones. Cada uno tiene su solución y las tres se combinan.'
-source:
-  url: 'https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools'
-  author: 'Claude Cookbook (Anthropic)'
-  platform: docs
+sources:
+  - title: 'Context engineering: memory, compaction, and tool clearing'
+    url: 'https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools'
+    author: 'Claude Cookbook (Anthropic)'
+    platform: docs
 tags: ['context-engineering', 'memoria', 'compaction', 'anthropic', 'coste']
-projects: ['sistemas-gestorias', 'auditoria-gestorias', 'customlab']
+project: sistema-gestorias
+projectTakeaway: 'Las tres palancas son piezas componibles del andamiaje: clearing y compaction se configuran igual en todos los despachos, y la memory tool con un fichero por cliente es lo que hace que el segundo despacho arranque más rápido que el primero.'
 glossary:
   - term: context window
     definition: 'El máximo de tokens que el modelo puede ver de una vez. Cuando se llena, algo hay que tirar.'

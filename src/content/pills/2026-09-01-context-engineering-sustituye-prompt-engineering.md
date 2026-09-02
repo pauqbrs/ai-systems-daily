@@ -5,12 +5,14 @@ section: prompting-claude
 depth: pill
 readingMinutes: 2
 tldr: 'La disciplina ha cambiado de nombre por una razón real: el cuello de botella dejó de ser cómo redactas la instrucción y pasó a ser qué conjunto mínimo de tokens de alta señal metes en cada llamada.'
-source:
-  url: 'https://sourcegraph.com/blog/context-engineering'
-  author: 'Sourcegraph'
-  platform: blog
+sources:
+  - title: 'Context Engineering: A Practical Guide for AI Agents'
+    url: 'https://sourcegraph.com/blog/context-engineering'
+    author: 'Sourcegraph'
+    platform: blog
 tags: ['context-engineering', 'prompting', 'claude', 'coste']
-projects: ['sistemas-gestorias', 'auditoria-gestorias', 'customlab']
+project: customlab
+projectTakeaway: 'En un embudo de muchas peticiones pequeñas manda el céntimo por conversación: recortar el contexto que no cambia la respuesta baja el coste unitario y la latencia a la vez, que son las dos métricas del inbound.'
 glossary:
   - term: context engineering
     definition: 'Diseñar deliberadamente qué ve el modelo en cada llamada: instrucciones, tools, documentos, historial. Todo, no solo el texto que tú escribes.'

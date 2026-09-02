@@ -14,7 +14,7 @@ const { Content } = await render(guide);
 const project = PROJECT_META[guide.data.project];
 
 const sources = (
-  await Promise.all(guide.data.pills.map((ref) => getEntry('pills', ref.id)))
+  await Promise.all(guide.data.basedOn.map((ref) => getEntry('pills', ref.id)))
 ).filter((p): p is NonNullable<typeof p> => Boolean(p));
 ---
 

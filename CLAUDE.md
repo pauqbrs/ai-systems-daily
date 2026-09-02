@@ -82,33 +82,57 @@ Antes de escribir, revisa los pills de los últimos 14 días
 (`src/content/pills/`). Un tema repetido solo vale si aporta algo nuevo, y
 entonces hay que decir explícitamente qué añade respecto a la pieza anterior.
 
+### El filtro que más ahorra: qué NO le sirve
+
+`config/projects.md` tiene, para cada proyecto, un apartado **«qué material NO le
+sirve»**. Úsalo antes de escribir, no después: descarta el material que caiga ahí
+aunque sea interesante en abstracto. Un análisis excelente de agentes autónomos de
+veinte pasos no vale nada para un embudo que se juega el céntimo por conversación.
+
+### Las preguntas abiertas
+
+Cada proyecto tiene **preguntas abiertas**: dudas concretas que Pau tiene sin
+resolver. Cuando una fuente responde una de ellas, esa pieza sube automáticamente
+de prioridad y el `projectTakeaway` se escribe solo. Revísalas cada día.
+
 ---
 
 ## 4. Formato de los archivos
 
 ### `src/content/pills/YYYY-MM-DD-slug.md`
 
-El esquema completo y autoritativo está en `src/content.config.ts`. Notas sobre
-los campos que más se hacen mal:
+El esquema completo y autoritativo está en `src/content.config.ts`. **Los mínimos
+de longitud de ese archivo son el control de calidad, no burocracia**: si el build
+se queja de que una explicación es corta, la explicación es corta. La respuesta
+correcta nunca es relajar el esquema, es escribir mejor o publicar menos piezas.
+
+Notas sobre los campos que más se hacen mal:
 
 - `tldr` — una o dos frases. Es lo que se lee en la portada y decide si abre.
+- `sources` — una lista. Una pieza sin fuente no se publica. Cada fuente lleva su
+  `title` real, no una descripción inventada.
+- `project` — **uno solo**. El que de verdad cambia con esto. Si dudas entre dos,
+  es que el aterrizaje no está claro y hay que pensarlo más.
+- `projectTakeaway` — qué cambia esta pieza en ese proyecto, concreto. Es la regla
+  de aterrizaje hecha obligatoria. «Es útil para el proyecto» no vale; «da el
+  umbral que ordena la propuesta: horas facturables, no dificultad técnica» sí.
 - `apply` — 3-4 pasos que Pau puede ejecutar hoy. Imperativos y concretos.
   «Revisa tu prompt» no vale; «abre tu agente y separa el prompt en el bloque
   estático y el variable» sí.
 - `glossary` — todo término en inglés que uses. Alimenta `/glosario`.
-- `projects` — solo los que apliquen de verdad. Etiquetar los tres siempre
-  destruye la utilidad del campo.
-- `quiz` — 2-3 preguntas. **Reglas de calidad, importantes:**
+- `quiz` — 2-3 preguntas, obligatorio. **Reglas de calidad, importantes:**
   - Preguntan por **aplicación**, no por memoria. Mal: «¿cuánto ahorra la caché?».
     Bien: «tu prompt empieza con la fecha, ¿qué pasa con la caché?».
   - Los distractores tienen que ser plausibles: errores que alguien cometería de
     verdad. Opciones absurdas hacen el examen inútil.
   - `explanation` explica por qué la correcta lo es **y por qué las otras no**.
 
+Los archivos que empiezan por `_` (como `_template.md`) quedan fuera del build.
+
 ### `src/content/editions/YYYY-MM-DD.md`
 
-Un editorial corto (3-5 párrafos) que da el hilo conductor del día. No es un
-índice: las piezas ya se listan solas. Es el criterio de por qué hoy va esto.
+Un editorial corto (3-5 párrafos) que da el hilo conductor del día en `thread`. No
+es un índice: las piezas ya se listan solas. Es el criterio de por qué hoy va esto.
 
 ### `src/content/guides/slug.md`
 
@@ -143,7 +167,7 @@ Para cada issue abierto:
 
 1. Leer los pills que menciona, completos.
 2. Escribir `src/content/guides/<slug>.md` con el frontmatter del esquema
-   (`pills` referencia los ids de los pills; `issue` es el número del issue).
+   (`basedOn` referencia los ids de los pills; `issue` es el número del issue).
 3. La guía **no resume los pills otra vez**. Los da por leídos y produce:
    - **Qué tiene que producir el sistema** — el entregable, concreto.
    - **Decisiones de diseño** — una tabla de qué decide el modelo y qué el código.
@@ -163,5 +187,6 @@ estructura.
 - **No inventar cifras.** Sin número verificado, no hay número.
 - **No empujar si `bun run build` falla.**
 - **No sobrepasar las 5 piezas.** El listón es «Pau lo lee entero con un café».
-- **No etiquetar los tres proyectos por defecto** en `projects`.
+- **Un solo `project` por pieza**, con su `projectTakeaway` concreto.
+- **No relajar los mínimos del esquema** para que algo pase el build.
 - **No traducir la jerga técnica**, pero no dejarla nunca sin explicar.

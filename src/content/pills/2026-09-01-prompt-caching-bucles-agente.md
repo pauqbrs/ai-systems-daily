@@ -5,12 +5,14 @@ section: datos-tokens
 depth: analisis
 readingMinutes: 3
 tldr: 'Un agente reprocesa todo su contexto en cada paso. El equipo de Deep Agents colocó los cache breakpoints donde el prompt deja de cambiar y midió reducciones de coste de entre el 49% y el 80% sin tocar la lógica del agente.'
-source:
-  url: 'https://www.langchain.com/blog/deep-agents-prompt-caching'
-  author: 'Equipo de Deep Agents (LangChain)'
-  platform: blog
+sources:
+  - title: 'Prompt Caching in Deep Agents'
+    url: 'https://www.langchain.com/blog/deep-agents-prompt-caching'
+    author: 'Equipo de Deep Agents (LangChain)'
+    platform: blog
 tags: ['prompt-caching', 'coste', 'agentes', 'anthropic']
-projects: ['sistemas-gestorias', 'auditoria-gestorias']
+project: auditoria-gestorias
+projectTakeaway: 'Una auditoría recorre decenas de documentos con el mismo marco y checklist en el prompt: con el breakpoint bien puesto ese bloque se paga una vez en vez de cuarenta, y eso decide si auditar sale a céntimos o a euros por cliente.'
 glossary:
   - term: prompt caching
     definition: 'Guardar en el servidor del proveedor la parte del prompt que no cambia entre llamadas, para no pagarla entera cada vez. En Anthropic, escribir en caché cuesta un 25% más que un token normal y leer de ella cuesta un 90% menos.'

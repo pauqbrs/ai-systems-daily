@@ -5,12 +5,14 @@ section: agentes
 depth: pill
 readingMinutes: 2
 tldr: 'Lo que separa un agente de demo de uno que aguanta no es el modelo ni la librería: son contratos de tools explícitos, fronteras de memoria claras y enrutamiento determinista para todo lo que no necesita criterio.'
-source:
-  url: 'https://mlflow.org/articles/building-production-ready-ai-agents-in-2026/'
-  author: 'MLflow'
-  platform: blog
+sources:
+  - title: 'Building Production-Ready AI Agents in 2026'
+    url: 'https://mlflow.org/articles/building-production-ready-ai-agents-in-2026/'
+    author: 'MLflow'
+    platform: blog
 tags: ['arquitectura', 'tools', 'fiabilidad', 'observabilidad']
-projects: ['sistemas-gestorias', 'auditoria-gestorias']
+project: sistema-gestorias
+projectTakeaway: 'Marca la frontera entre base y trabajo a medida: lo determinista (validaciones aritméticas, umbrales, enrutamiento) se generaliza al andamiaje; lo que exige criterio contable del despacho se queda a medida.'
 glossary:
   - term: harness
     definition: 'Todo el andamiaje que rodea al modelo: el bucle de ejecución, las tools, el manejo de errores, los reintentos y los logs. Es donde vive de verdad la ingeniería de un agente.'

@@ -5,12 +5,14 @@ section: gestorias
 depth: analisis
 readingMinutes: 3
 tldr: 'Un despacho de 4-10 personas recupera entre 20 y 40 horas al mes automatizando dos o tres procesos de back-office. Los cuatro candidatos están identificados, y Verifactu en 2027 le pone fecha de caducidad a seguir sin hacerlo.'
-source:
-  url: 'https://www.javadex.es/blog/automatizar-asesoria-gestoria-ia-backoffice-2026'
-  author: 'Javadex'
-  platform: blog
+sources:
+  - title: 'Automatizar el back-office de una asesoría o gestoría con IA en 2026'
+    url: 'https://www.javadex.es/blog/automatizar-asesoria-gestoria-ia-backoffice-2026'
+    author: 'Javadex'
+    platform: blog
 tags: ['gestorias', 'ocr', 'conciliacion', 'verifactu', 'roi']
-projects: ['auditoria-gestorias', 'sistemas-gestorias']
+project: auditoria-gestorias
+projectTakeaway: 'Da el esqueleto de los cinco bloques que tiene que producir la auditoría, y el umbral que ordena la propuesta: horas facturables recuperadas, no dificultad técnica.'
 glossary:
   - term: OCR
     definition: 'Optical Character Recognition. Leer texto de una imagen o un PDF escaneado. Es el primer paso de cualquier automatización documental, y hoy va acompañado de un modelo que además interpreta lo que ha leído.'

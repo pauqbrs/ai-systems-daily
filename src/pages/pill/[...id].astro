@@ -71,10 +71,10 @@ const accent = sectionAccent(data.section);
           id={pill.id}
           title={data.title}
           section={data.section}
-          sourceUrl={data.source.url}
+          sourceUrl={data.sources[0]!.url}
         />
         <a
-          href={data.source.url}
+          href={data.sources[0]!.url}
           target="_blank"
           rel="noopener"
           class="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[13.5px] font-medium"
@@ -97,10 +97,20 @@ const accent = sectionAccent(data.section);
         </a>
       </div>
 
-      <p class="mt-3 text-[12.5px] faint">
-        {data.source.author} · {data.source.platform}
-        {data.source.publishedAt && ` · publicado el ${formatDate(data.source.publishedAt)}`}
-      </p>
+      <ul class="mt-3 space-y-0.5">
+        {
+          data.sources.map((s) => (
+            <li class="text-[12.5px] faint">
+              <a href={s.url} target="_blank" rel="noopener" class="hover:underline">
+                {s.title}
+              </a>
+              {' — '}
+              {s.author} · {s.platform}
+              {s.publishedAt && ` · ${formatDate(s.publishedAt)}`}
+            </li>
+          ))
+        }
+      </ul>
     </header>
 
     <div class="grid lg:grid-cols-[minmax(0,1fr)_260px] gap-x-12 gap-y-10 pb-16">
@@ -189,25 +199,18 @@ const accent = sectionAccent(data.section);
           )
         }
 
-        {
-          data.projects.length > 0 && (
-            <section>
-              <h2 class="text-[12px] uppercase tracking-wide faint mb-3">Aplica a</h2>
-              <ul class="space-y-2">
-                {data.projects.map((p) => (
-                  <li>
-                    <a
-                      href={url(`/proyectos#${p}`)}
-                      class="block rounded-lg px-3 py-2 text-[13px] font-medium surface hover:border-[var(--border-strong)] transition-colors"
-                    >
-                      {PROJECT_META[p].name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )
-        }
+        <section>
+          <h2 class="text-[12px] uppercase tracking-wide faint mb-3">Qué cambia en tu proyecto</h2>
+          <a
+            href={url(`/proyectos#${data.project}`)}
+            class="block rounded-lg px-3.5 py-3 surface hover:border-[var(--border-strong)] transition-colors"
+          >
+            <span class="block text-[13px] font-semibold mb-1.5" style={`color: ${accent}`}>
+              {PROJECT_META[data.project].name}
+            </span>
+            <span class="block text-[13px] leading-relaxed muted">{data.projectTakeaway}</span>
+          </a>
+        </section>
 
         {
           data.tags.length > 0 && (

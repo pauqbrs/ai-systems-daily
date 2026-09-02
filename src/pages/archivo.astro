@@ -42,7 +42,7 @@ const editionByDay = new Map(editions.map((e) => [isoDay(e.data.date), e]));
                 </a>
                 <span class="text-[12.5px] faint">{formatDate(new Date(day))}</span>
               </div>
-              {edition && <p class="text-[14px] leading-relaxed muted mb-3 max-w-2xl">{edition.data.hook}</p>}
+              {edition && <p class="text-[14px] leading-relaxed muted mb-3 max-w-2xl">{edition.data.thread}</p>}
               <ul class="flex flex-wrap gap-x-4 gap-y-1">
                 {dayPills.map((pill) => (
                   <li class="text-[13px]">

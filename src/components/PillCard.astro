@@ -60,7 +60,7 @@ const accent = sectionAccent(data.section);
       <p class="text-[14px] leading-relaxed muted">{data.tldr}</p>
 
       <p class="text-[12.5px] faint mt-2.5">
-        {data.source.author} · {data.source.platform}
+        {data.sources[0]!.author} · {data.sources[0]!.platform}
       </p>
     </div>
 
@@ -70,7 +70,7 @@ const accent = sectionAccent(data.section);
         id={pill.id}
         title={data.title}
         section={data.section}
-        sourceUrl={data.source.url}
+        sourceUrl={data.sources[0]!.url}
       />
     </div>
   </div>
