@@ -3,7 +3,7 @@ title: "Auditoría rápida de un flujo documental con IA"
 date: 2026-09-02
 summary: "Cómo medir en media jornada si un pipeline de extracción documental es fiable de verdad, y dónde poner el umbral de revisión humana."
 basedOn: []
-project: sin-definir
+project: sistema-gestorias
 readingMinutes: 9
 tags: ["gestorias", "evaluacion", "extraccion"]
 ---

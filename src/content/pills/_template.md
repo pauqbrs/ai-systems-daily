@@ -13,7 +13,7 @@ sources:
 glossary:
   - term: "término en inglés sin traducir"
     definition: "Qué es, en una frase que se entienda sin haber leído el resto. Mínimo 20 caracteres."
-project: sin-definir
+project: sistema-gestorias
 projectTakeaway: "Qué haces mañana con esto, en concreto, en ese proyecto. Mínimo 40 caracteres."
 quiz:
   - question: "Situación concreta + qué decisión tomas. De aplicación, nunca de memoria."

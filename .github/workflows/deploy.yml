@@ -10,6 +10,7 @@ permissions:
   pages: write
   id-token: write
 
+# Un despliegue a la vez; no cancelamos el que ya está corriendo.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -19,11 +20,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
       - run: bun install --frozen-lockfile
+
+      # El build valida el contenido contra src/content.config.ts:
+      # si una pieza no cumple el esquema, el deploy no sale.
       - run: bun run build
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist

@@ -7,9 +7,9 @@ ponen modelos en producción, y qué de eso sirve para los proyectos de la secci
 Este archivo es el manual de operación y el contrato editorial. **Manda sobre el
 prompt de la rutina programada** en todo lo relativo a estilo, volumen y formato.
 
-> **Estado: borrador inicial.** Lo generó Claude al montar el repo, no Pau.
-> Las secciones 3 (proyectos) y las fuentes de `config/sources.md` son propuestas
-> y hay que corregirlas antes de que las ediciones sean realmente útiles.
+> **Estado: borrador.** Lo generó Claude al montar el repo, no Pau. Los proyectos
+> de la §3 ya son los reales; lo que sigue sin confirmar son las fuentes de
+> `config/sources.md` y, sobre todo, las *preguntas abiertas* de cada proyecto.
 
 ---
 
@@ -61,15 +61,17 @@ Estas no se negocian. Ante la duda, no publicar.
 
 ## 3. Proyectos de Pau
 
-> **TODO (Pau):** esta sección es un placeholder. Rellénala con los proyectos
-> reales — el `project` de cada pieza tiene que ser uno de estos slugs, y el
-> `projectTakeaway` tiene que ser específico de verdad. Mantén el detalle de
-> "qué material sirve" a cada uno: es lo que hace que el aterrizaje no sea genérico.
-> El detalle largo vive en `config/projects.md`; esta tabla es solo el índice.
+El `project` de cada pieza tiene que ser uno de estos slugs. El detalle largo vive
+en `config/projects.md`; esta tabla es solo el índice.
 
 | Slug | Proyecto | Qué material le sirve |
 |---|---|---|
-| `sin-definir` | Placeholder | Sustituir antes de la primera edición real |
+| `customlab` | Merchandising para empresas. Automatizar el embudo entero: marketing → inbound → pedido | Voz de marca a volumen, cualificación de leads, brief libre a pedido estructurado, coste y latencia por interacción |
+| `sistema-gestorias` | La base genérica para montar el pipeline a medida de cada gestoría (sin nombre aún) | Piezas componibles, configuración en vez de código, evaluación reutilizable, qué generaliza entre despachos y qué no |
+
+> **Pendiente (Pau):** en `config/projects.md` faltan la fase de cada proyecto y
+> las *preguntas abiertas*. Sin eso, el `projectTakeaway` de cada pieza sale
+> plausible pero genérico, que es lo que prohíbe la §2.5.
 
 ---
 
@@ -94,7 +96,7 @@ sources:
 glossary:
   - term: "prompt caching"
     definition: "Reutilizar el prefijo ya procesado de un prompt entre llamadas para no volver a pagar por esos tokens."
-project: sin-definir
+project: sistema-gestorias
 projectTakeaway: "Qué haces mañana con esto, en concreto, en ese proyecto."
 quiz:
   - question: "Pregunta de aplicación, no de memoria"
@@ -162,7 +164,11 @@ bun run dev                     # previsualizar en local
 
 ### Nombre del repo
 
-El repo se llama `pauqbrs-ai-systems-daily`, pero el prompt de la rutina apunta a
-`pauqbrs/ai-systems-daily`. **Hay que alinear los dos** o la rutina seguirá
-fallando al clonar: o renombras el repo en GitHub a `ai-systems-daily` (y entonces
-cambias `base` en `astro.config.mjs`), o corriges el prompt de la rutina.
+El repo es **`pauqbrs/pauqbrs-ai-systems-daily`** y se queda así. El `base` de
+`astro.config.mjs` ya coincide. Si el prompt de la rutina todavía dice
+`pauqbrs/ai-systems-daily`, el que está mal es el prompt: la rutina fallará al
+clonar hasta que se corrija ahí.
+
+Y el push necesita que el repo esté en las **fuentes autorizadas del entorno**.
+Sin eso la rutina puede clonar (es público) pero no publicar, y el proxy responde
+`403: not in this session's authorized repository set`.

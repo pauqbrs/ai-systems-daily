@@ -32,9 +32,11 @@ bun run build    # valida el contenido contra los esquemas
 
 ## Pendiente antes de la primera edición real
 
-- [ ] Rellenar `config/projects.md` — ahora es un placeholder, y sin proyectos
-      reales el aterrizaje de cada pieza sale genérico.
-- [ ] Revisar `CLAUDE.md` §3 (tabla de proyectos) y el resto del contrato.
+- [ ] Completar en `config/projects.md` la **fase** y las **preguntas abiertas** de
+      `customlab` y `sistema-gestorias`. Sin eso el aterrizaje de cada pieza sale
+      plausible pero genérico.
+- [ ] Ponerle nombre al sistema para gestorías y renombrar el slug.
+- [ ] Revisar el resto de `CLAUDE.md`.
 - [ ] Completar `config/sources.md` con las fuentes de sector propias.
 - [ ] Revisar el tono de `src/content/guides/auditoria-rapida-gestoria-v1.md`: es
       la referencia que copiarán las demás guías, y la escribió Claude.

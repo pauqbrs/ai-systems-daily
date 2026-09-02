@@ -4,7 +4,7 @@ date: 2026-01-01
 summary: "Qué resuelve y para quién, en una frase. Mínimo 40 caracteres."
 basedOn:
   - 2026-01-01-slug-del-pill
-project: sin-definir
+project: sistema-gestorias
 requestedIn: 1
 readingMinutes: 8
 tags: []
