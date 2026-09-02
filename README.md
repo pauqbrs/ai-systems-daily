@@ -1,2 +1,2 @@
-# pauqbrs-ai-systems-daily
+# ai-systems-daily
 AI NEWSLETTER
