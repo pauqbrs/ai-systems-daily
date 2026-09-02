@@ -24,5 +24,7 @@ labels: guia-solicitada
 
 ---
 
+_La sesión diaria recoge los issues con esta etiqueta o cuyo título empiece por «Guía:»._
+
 _Este issue lo recoge la sesión diaria: escribe la guía en `src/content/guides/`,
 la publica y cierra el issue con el enlace._

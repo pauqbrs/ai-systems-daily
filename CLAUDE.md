@@ -160,8 +160,11 @@ Cada mañana, en este orden:
 ## 6. Guías de aplicación
 
 Pau marca piezas mientras lee y pide una guía combinada desde `/seleccion`. Eso
-abre un issue con la etiqueta `guia-solicitada` que contiene los pills, el
-proyecto destino y su contexto adicional.
+abre un issue que contiene los pills, el proyecto destino y su contexto adicional.
+
+**Cómo encontrarlos:** issues abiertos con la etiqueta `guia-solicitada` **o**
+cuyo título empiece por `Guía:`. La detección por título es la que manda, porque
+no depende de que la etiqueta exista en el repo.
 
 Para cada issue abierto:
 
