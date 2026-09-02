@@ -1,26 +1,64 @@
-name: Deploy a GitHub Pages
+name: Publicar y desplegar
 
+# Se dispara en dos casos:
+#  - push a main: publicación normal (una persona editando directamente).
+#  - push a claude/edicion-*: la rutina diaria.
+#
+# La rutina NO puede empujar a main. Las rutinas solo pueden escribir sin
+# fricción en ramas con prefijo `claude/`, y además un push a main se rechaza
+# cuando la rama tiene commits de un autor distinto al dueño de la rutina —
+# que es el caso aquí. Así que la rutina empuja su rama y el job `promocionar`
+# la lleva a main usando el GITHUB_TOKEN del repo, que sí tiene permiso.
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'claude/edicion-*'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-# Un despliegue a la vez. No cancelamos el que está en curso: si la sesión
-# diaria empuja dos veces seguidas, queremos que ambas terminen en orden.
+# Un despliegue a la vez. No cancelamos el que está en curso: si se empujan
+# dos ediciones seguidas, queremos que ambas terminen en orden.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  promocionar:
+    # Solo para las ramas de la rutina. Deja main con la edición nueva.
+    if: startsWith(github.ref, 'refs/heads/claude/edicion-')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Llevar la edición a main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          # --no-ff deja constancia de qué edición entró y cuándo.
+          git merge --no-ff "${GITHUB_SHA}" -m "Publica ${GITHUB_REF_NAME}"
+          git push origin main
+
+  build:
+    needs: [promocionar]
+    # `always()` para que el build corra también en los push directos a main,
+    # donde `promocionar` se salta. Sin esto, un job saltado bloquea el resto.
+    if: always() && needs.promocionar.result != 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Tras promocionar, lo que hay que construir es main, no la rama.
+          ref: main
 
       - uses: oven-sh/setup-bun@v2
         with:
