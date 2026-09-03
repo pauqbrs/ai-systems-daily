@@ -169,9 +169,23 @@ RAMA="claude/edicion-$(date +%F)"
 git checkout -b "$RAMA" && git push -u origin "$RAMA"
 ```
 
-Por esa vía el despliegue puede fallar: el entorno `github-pages` solo acepta
+Por esa vía el job `deploy` falla: el entorno `github-pages` solo acepta
 despliegues desde las ramas de su lista, y `claude/**` no está en ella. La
-promoción a `main` sí se aplica, así que el contenido no se pierde.
+promoción a `main` sí se aplica, así que el contenido no se pierde, pero **el
+sitio se queda sin desplegar**: el push que hace `promocionar` usa el
+`GITHUB_TOKEN`, y los pushes con ese token no disparan workflows.
+
+Así que el plan B tiene un tercer paso obligatorio. El workflow acepta
+`workflow_dispatch`, y lanzado sobre `main` sí despliega, porque `main` sí
+está en la lista del entorno:
+
+```
+Actions → «Publicar y desplegar» → Run workflow → Branch: main
+```
+
+Desde una sesión, con las herramientas de GitHub: `run_workflow` sobre
+`deploy.yml` con `ref: main`. Comprueba que ese run acaba en verde: es el que
+publica de verdad.
 
 ### Permisos
 
