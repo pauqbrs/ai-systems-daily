@@ -78,6 +78,13 @@ jobs:
 
   deploy:
     needs: build
+    # `promocionar` se salta en los push a main y en workflow_dispatch, y
+    # Actions propaga ese «skipped» a todo lo que cuelga de él: `build` se
+    # salvaba con su `always()`, pero `deploy` heredaba la condición implícita
+    # `success()`, que exige que TODOS los needs transitivos hayan pasado. El
+    # resultado era un run entero en verde con el deploy saltado y el sitio
+    # congelado. Hay que mirar el resultado de `build` explícitamente.
+    if: always() && needs.build.result == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
