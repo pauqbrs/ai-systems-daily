@@ -69,7 +69,7 @@ Escribe también el editorial del día en `src/content/editions/YYYY-MM-DD.md`, 
    git checkout -b "$RAMA" && git push -u origin "$RAMA"
    ```
 
-   Ojo: por esa vía el despliegue puede fallar por la regla de ramas del entorno `github-pages`. Es respaldo, no el camino normal.
+   Ojo: por esa vía el job `deploy` falla por la regla de ramas del entorno `github-pages`, y además el push que hace `promocionar` usa el `GITHUB_TOKEN`, que no dispara workflows. O sea que el contenido llega a `main` pero **el sitio no se despliega**. Hay un tercer paso obligatorio: lanzar el workflow a mano sobre `main` (`workflow_dispatch` / `run_workflow` con `ref: main`), que sí despliega. No des la edición por publicada hasta que ese run esté en verde.
 
 4. Comprueba que el workflow ha pasado. Si falla, mira el log y arregla el contenido.
 5. Termina con un resumen: qué piezas has publicado, de qué fuentes, y qué guías. Si algo no se pudo hacer, dilo explícitamente.
@@ -102,6 +102,20 @@ git y de build para que ninguna sesión se quede esperando una aprobación a las
 siete de la mañana. Si añades un paso al flujo que use un comando nuevo,
 añádelo también a ese fichero.
 
-**La lección de las cuatro:** un estado «correcto» solo significa que la sesión
-terminó sin error de infraestructura. Comprueba siempre que el push llegó y que
-el workflow pasó.
+**5. `git push origin main` bloqueado por el clasificador de auto mode**, en la
+edición del 3 de septiembre. No es el repositorio: el mismo push funcionó el día
+anterior desde otra sesión (run 14). Es el modo de permisos con el que arranca
+esta sesión, que trata el push a la rama por defecto como acción sensible y lo
+deniega —no lo pregunta, lo deniega— sin que `.claude/settings.json` pueda
+autorizarlo. `.claude/settings.json` sí evita el bloqueo de `git commit`
+(incidencia 4), que era el problema anterior.
+
+La consecuencia práctica: **el plan B de la rama `claude/` no es un respaldo
+teórico, es el camino que de verdad se usa**, y arrastra la limitación del
+entorno `github-pages`. De ahí el tercer paso del apartado anterior.
+
+**La lección de las cinco:** un estado «correcto» solo significa que la sesión
+terminó sin error de infraestructura. Y que el contenido esté en `main` tampoco
+significa que esté publicado. Comprueba las tres cosas por separado: que el push
+llegó, que `main` tiene la edición, y que hay un run **en verde disparado desde
+`main`** posterior a ella.
