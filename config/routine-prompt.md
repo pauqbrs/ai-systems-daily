@@ -114,8 +114,28 @@ La consecuencia práctica: **el plan B de la rama `claude/` no es un respaldo
 teórico, es el camino que de verdad se usa**, y arrastra la limitación del
 entorno `github-pages`. De ahí el tercer paso del apartado anterior.
 
-**La lección de las cinco:** un estado «correcto» solo significa que la sesión
+**6. El sitio llevaba desde el 2 de septiembre sin desplegarse, con todos los
+runs en verde.** Descubierto al comprobar la edición del 3: la portada pública
+seguía mostrando la del 1. El job `deploy` no fallaba, se **saltaba**, y un job
+saltado no rompe el estado del run.
+
+La causa está en cómo Actions propaga el «skipped». `promocionar` se salta en
+los push a `main` y en `workflow_dispatch`. `build` se salvaba porque lleva
+`if: always()`, pero `deploy` no tenía condición, así que heredaba la implícita
+`success()`, que exige que **todos** los `needs` transitivos hayan pasado —y
+`promocionar`, saltado, no pasa—. Arreglado poniéndole a `deploy` la condición
+explícita `if: always() && needs.build.result == 'success'`.
+
+Lo que hace esta incidencia peligrosa no es el bug, es que se comprobó mal: la
+sesión anterior dio el despliegue por bueno leyendo la conclusión del run
+(«success») en vez de la del job. **Un run en verde con el job que importa
+saltado se ve exactamente igual que un despliegue correcto.** La única
+comprobación que vale es abrir la web y ver la edición.
+
+**La lección de las seis:** un estado «correcto» solo significa que la sesión
 terminó sin error de infraestructura. Y que el contenido esté en `main` tampoco
-significa que esté publicado. Comprueba las tres cosas por separado: que el push
-llegó, que `main` tiene la edición, y que hay un run **en verde disparado desde
-`main`** posterior a ella.
+significa que esté publicado, ni un run en verde significa que se desplegara.
+Comprueba cuatro cosas por separado: que el push llegó, que `main` tiene la
+edición, que el **job** `deploy` de un run disparado desde `main` se ejecutó (no
+que el run esté verde: que el job no esté `skipped`), y que la edición se ve en
+<https://pauqbrs.github.io/ai-systems-daily/>.
