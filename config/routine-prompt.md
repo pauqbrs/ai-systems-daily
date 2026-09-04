@@ -16,6 +16,24 @@ La rutina debe configurarse con:
 
 Genera la edición diaria de AI Systems Daily, la newsletter de Pau sobre sistemas de IA aplicados.
 
+## Paso 0 — ¿Ya está hecha la edición de hoy?
+
+Antes de nada, después de sincronizar:
+
+```bash
+test -f "src/content/editions/$(date +%F).md" && echo "YA PUBLICADA"
+```
+
+Si el fichero existe, **la edición de hoy ya está escrita y no se vuelve a
+generar**. La rutina puede dispararse más de una vez el mismo día. Sobrescribir
+la edición del día no es un fallo recuperable: se pierde el trabajo publicado y
+el sitio cambia bajo los pies de quien ya lo estaba leyendo.
+
+En ese caso, el trabajo del disparo es corto: atender los issues de guía
+pendientes (Paso 2) si los hay, comprobar que la edición se sigue viendo en la
+web, y terminar diciendo que ya estaba publicada. Solo escribe una segunda
+edición si Pau la pide explícitamente, y entonces con otra fecha.
+
 ## Paso 1 — Cargar contexto
 
 El repositorio `pauqbrs/ai-systems-daily` ya está clonado. Lee, en este orden y enteros:
@@ -132,7 +150,22 @@ sesión anterior dio el despliegue por bueno leyendo la conclusión del run
 saltado se ve exactamente igual que un despliegue correcto.** La única
 comprobación que vale es abrir la web y ver la edición.
 
-**La lección de las seis:** un estado «correcto» solo significa que la sesión
+**7. La rutina disparó dos veces el mismo día**, el 4 de septiembre: a las 01:41
+y a las 05:20 UTC. La edición ya estaba escrita, publicada y desplegada desde el
+primer disparo, y el prompt no tenía ninguna comprobación que lo detectara: decía
+«genera la edición de HOY» sin más. Una sesión que lo siguiera al pie de la letra
+habría reescrito la edición del día entera.
+
+No es un fallo con daño esta vez, pero el modo de fallo es feo: sobrescribir una
+edición publicada pierde trabajo y cambia el sitio bajo los pies de quien lo está
+leyendo. De ahí el Paso 0: si `src/content/editions/$(date +%F).md` existe, la
+edición está hecha y el disparo se limita a las guías y a comprobar la web.
+
+Si los dos disparos diarios no son intencionados, hay que mirar la rutina en
+[claude.ai/code/routines](https://claude.ai/code/routines): puede haber dos
+Routines activas apuntando al mismo trabajo, o un `cron` con dos horas.
+
+**La lección de las siete:** un estado «correcto» solo significa que la sesión
 terminó sin error de infraestructura. Y que el contenido esté en `main` tampoco
 significa que esté publicado, ni un run en verde significa que se desplegara.
 Comprueba cuatro cosas por separado: que el push llegó, que `main` tiene la

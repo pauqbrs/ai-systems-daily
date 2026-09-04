@@ -144,6 +144,11 @@ Ver sección 6.
 
 Cada mañana, en este orden:
 
+0. **Comprobar si la edición de hoy ya existe.** Si
+   `src/content/editions/YYYY-MM-DD.md` está, no se genera otra: la rutina puede
+   dispararse dos veces el mismo día, y sobrescribir una edición publicada pierde
+   trabajo. En ese caso el disparo se limita a los issues de guía y a comprobar
+   que el sitio se ve.
 1. `git pull` en `main`.
 2. Leer `config/sources.md`, `config/projects.md` y los pills de los últimos 14 días.
 3. **Atender primero los issues abiertos con la etiqueta `guia-solicitada`**
